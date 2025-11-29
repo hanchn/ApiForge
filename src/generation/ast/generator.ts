@@ -2,6 +2,9 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { ApiItem } from '../../model/unified'
 import { nameFromPathSnake } from '../../naming/namer'
+import { MetaStore } from '../../meta/metaStore'
+import { RenameStore } from '../../naming/renameStore'
+import { hashString } from '../../utils/checksum'
 
 function ensureDir(p: string) { fs.mkdirSync(p, { recursive: true }) }
 
@@ -33,16 +36,26 @@ function serviceHeader(): string {
   return `import { request } from '../runtime/clientProvider'\n\n`
 }
 
-function makeFunction(item: ApiItem): string {
-  const fn = nameFromPathSnake(item)
+function extractPathParams(pathTmpl: string): string[] {
+  const out: string[] = []
+  pathTmpl.replace(/\{([^}]+)\}/g, (_m, p1) => { out.push(String(p1)); return '' })
+  return out
+}
+
+function makeFunction(item: ApiItem, finalName: string): string {
   const url = buildUrlFromPath(item.path)
-  return `export async function ${fn}(params?: any, body?: any): Promise<any> {\n  const url = \`${url}\`\n  return request<any>('${item.method}', url, body, { })\n}\n\n`
+  const params = extractPathParams(item.path)
+  const paramsType = params.length ? `{ ${params.map(p => `${p}: string`).join('; ')} }` : 'Record<string, any>'
+  return `export async function ${finalName}(params?: ${paramsType}, body?: any): Promise<any> {\n  const url = \`${url}\`\n  return request<any>('${item.method}', url, body, { })\n}\n\n`
 }
 
 export function generateApis(baseDir: string, sourceName: string, items: ApiItem[]) {
   const root = path.join(baseDir, sourceName)
   ensureDir(root)
   const indexPath = path.join(root, 'index.ts')
+  const meta = new MetaStore(baseDir, sourceName)
+  const rename = new RenameStore(baseDir, sourceName)
+  const renameMap = rename.read()
   const groups: Record<string, ApiItem[]> = {}
   for (const it of items) {
     const g = groupKey(it)
@@ -54,10 +67,13 @@ export function generateApis(baseDir: string, sourceName: string, items: ApiItem
     let contents = fs.existsSync(serviceFile) ? fs.readFileSync(serviceFile, 'utf8') : ''
     if (!contents) contents = serviceHeader()
     for (const it of list) {
-      const fn = nameFromPathSnake(it)
-      if (hasExportedFunction(contents, fn)) continue
-      const code = makeFunction(it)
+      const suggested = nameFromPathSnake(it)
+      const finalName = renameMap[it.id]?.name || suggested
+      if (hasExportedFunction(contents, finalName)) { continue }
+      const code = makeFunction(it, finalName)
       contents = contents + code
+      const checksum = hashString(code)
+      meta.upsert({ id: it.id, file: path.relative(root, serviceFile), exportName: finalName, method: it.method, path: it.path, checksum })
     }
     fs.writeFileSync(serviceFile, contents, 'utf8')
     const exportLine = `export * from './${g}.service'\n`
