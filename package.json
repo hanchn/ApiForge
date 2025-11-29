@@ -4,10 +4,21 @@
   "description": "Generate frontend API code from OpenAPI/YApi with AST incremental merges",
   "version": "0.0.1",
   "publisher": "apiforge",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apiforge/ApiForge.git"
+  },
   "engines": {
     "vscode": "^1.82.0"
   },
-  "categories": ["Other"],
+  "author": {
+    "name": "HanChn",
+    "email": ""
+  },
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "onCommand:apiforge.generateOne",
     "onCommand:apiforge.generateBatch",
@@ -22,15 +33,42 @@
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      { "command": "apiforge.generateOne", "title": "ApiForge: 生成接口（单个）" },
-      { "command": "apiforge.generateBatch", "title": "ApiForge: 批量生成接口" },
-      { "command": "apiforge.syncUpdate", "title": "ApiForge: 同步更新（增量）" },
-      { "command": "apiforge.configureSources", "title": "ApiForge: 配置数据源" },
-      { "command": "apiforge.renameMethod", "title": "ApiForge: 重命名接口方法" },
-      { "command": "apiforge.testSource", "title": "ApiForge: 测试数据源" },
-      { "command": "apiforge.refreshCache", "title": "ApiForge: 刷新数据源缓存" },
-      { "command": "apiforge.generateFromIds", "title": "ApiForge: 生成（ProjectId/catId/id）" }
-      ,{ "command": "apiforge.generateOpenAPI", "title": "ApiForge: 从OpenAPI生成" }
+      {
+        "command": "apiforge.generateOne",
+        "title": "ApiForge: 生成接口（单个）"
+      },
+      {
+        "command": "apiforge.generateBatch",
+        "title": "ApiForge: 批量生成接口"
+      },
+      {
+        "command": "apiforge.syncUpdate",
+        "title": "ApiForge: 同步更新（增量）"
+      },
+      {
+        "command": "apiforge.configureSources",
+        "title": "ApiForge: 配置数据源"
+      },
+      {
+        "command": "apiforge.renameMethod",
+        "title": "ApiForge: 重命名接口方法"
+      },
+      {
+        "command": "apiforge.testSource",
+        "title": "ApiForge: 测试数据源"
+      },
+      {
+        "command": "apiforge.refreshCache",
+        "title": "ApiForge: 刷新数据源缓存"
+      },
+      {
+        "command": "apiforge.generateFromIds",
+        "title": "ApiForge: 生成（ProjectId/catId/id）"
+      },
+      {
+        "command": "apiforge.generateOpenAPI",
+        "title": "ApiForge: 从OpenAPI生成"
+      }
     ],
     "menus": {
       "explorer/context": [
@@ -43,7 +81,10 @@
     },
     "views": {
       "explorer": [
-        { "id": "apiForgeView", "name": "ApiForge" }
+        {
+          "id": "apiForgeView",
+          "name": "ApiForge"
+        }
       ]
     },
     "configuration": {
@@ -56,30 +97,48 @@
         },
         "apiForge.output.baseDir": {
           "type": "string",
-          "default": "src/services",
+          "default": "Apis",
           "description": "输出目录根路径"
         },
         "apiForge.output.structure": {
           "type": "string",
-          "enum": ["byTag", "byPathPrefix", "flat"],
+          "enum": [
+            "byTag",
+            "byPathPrefix",
+            "flat"
+          ],
           "default": "byTag",
           "description": "文件组织策略"
         },
         "apiForge.template.runtime": {
           "type": "string",
-          "enum": ["external", "fetch", "axios", "umi-request", "ky"],
+          "enum": [
+            "external",
+            "fetch",
+            "axios",
+            "umi-request",
+            "ky"
+          ],
           "default": "external",
           "description": "运行时模板"
         },
         "apiForge.runtime.fallback": {
           "type": "string",
-          "enum": ["fetch", "axios", "umi-request", "ky"],
+          "enum": [
+            "fetch",
+            "axios",
+            "umi-request",
+            "ky"
+          ],
           "default": "fetch",
           "description": "外部未注入时的默认运行时"
         },
         "apiForge.naming.scheme": {
           "type": "string",
-          "enum": ["resourceVerbCamel", "pathSnake"],
+          "enum": [
+            "resourceVerbCamel",
+            "pathSnake"
+          ],
           "default": "pathSnake",
           "description": "命名方案"
         }
@@ -89,11 +148,14 @@
   "scripts": {
     "compile": "tsc -p .",
     "watch": "tsc -w -p .",
-    "vscode:prepublish": "npm run compile"
+    "vscode:prepublish": "npm run compile",
+    "package": "npx @vscode/vsce package",
+    "publish": "npx @vscode/vsce publish"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
     "@types/node": "^18.18.0",
-    "@types/vscode": "^1.82.0"
+    "@types/vscode": "^1.82.0",
+    "@vscode/vsce": "^3.7.1",
+    "typescript": "^5.4.0"
   }
 }
