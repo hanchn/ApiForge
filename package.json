@@ -150,7 +150,12 @@
     "watch": "tsc -w -p .",
     "vscode:prepublish": "npm run compile",
     "package": "npx @vscode/vsce package",
-    "publish": "npx @vscode/vsce publish"
+    "publish": "npx @vscode/vsce publish",
+    "release:patch": "npx @vscode/vsce publish patch",
+    "release:minor": "npx @vscode/vsce publish minor",
+    "release:major": "npx @vscode/vsce publish major",
+    "release:prepatch": "npx @vscode/vsce publish prepatch",
+    "release:prerelease": "npx @vscode/vsce publish prerelease"
   },
   "devDependencies": {
     "@types/node": "^18.18.0",
