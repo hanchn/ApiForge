@@ -1,0 +1,19 @@
+# Node/VSC extension
+node_modules/
+out/
+.vscode-test/
+*.vsix
+
+# OS/IDE
+.DS_Store
+.idea/
+.vs/
+
+# Env/lock
+.env*
+package-lock.json
+yarn.lock
+
+# Generated
+Apis/
+coverage/
