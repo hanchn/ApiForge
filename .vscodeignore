@@ -1,0 +1,8 @@
+out
+node_modules
+src
+tsconfig.json
+**/*.map
+**/*.ts
+README.md
+docs
