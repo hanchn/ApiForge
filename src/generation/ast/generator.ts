@@ -5,6 +5,7 @@ import { nameFromPathSnake } from '../../naming/namer'
 import { MetaStore } from '../../meta/metaStore'
 import { RenameStore } from '../../naming/renameStore'
 import { hashString } from '../../utils/checksum'
+import { generateTypes } from '../types/typeGenerator'
 
 function ensureDir(p: string) { fs.mkdirSync(p, { recursive: true }) }
 
@@ -56,6 +57,7 @@ export function generateApis(baseDir: string, sourceName: string, items: ApiItem
   const meta = new MetaStore(baseDir, sourceName)
   const rename = new RenameStore(baseDir, sourceName)
   const renameMap = rename.read()
+  const typeInputs: { item: ApiItem; exportName: string }[] = []
   const groups: Record<string, ApiItem[]> = {}
   for (const it of items) {
     const g = groupKey(it)
@@ -66,6 +68,7 @@ export function generateApis(baseDir: string, sourceName: string, items: ApiItem
     const serviceFile = path.join(root, `${g}.service.ts`)
     let contents = fs.existsSync(serviceFile) ? fs.readFileSync(serviceFile, 'utf8') : ''
     if (!contents) contents = serviceHeader()
+    const typeNames: Set<string> = new Set()
     for (const it of list) {
       const suggested = nameFromPathSnake(it)
       const finalName = renameMap[it.id]?.name || suggested
@@ -74,10 +77,19 @@ export function generateApis(baseDir: string, sourceName: string, items: ApiItem
       contents = contents + code
       const checksum = hashString(code)
       meta.upsert({ id: it.id, file: path.relative(root, serviceFile), exportName: finalName, method: it.method, path: it.path, checksum })
+      typeInputs.push({ item: it, exportName: finalName })
+      const pas = finalName.replace(/(^|_|-|\s)([a-z])/g, (_m, _p, c) => c.toUpperCase()).replace(/[_-\s]/g, '')
+      typeNames.add(`${pas}Params`)
+      typeNames.add(`${pas}Response`)
+    }
+    if (typeNames.size) {
+      const importLine = `import type { ${Array.from(typeNames).join(', ')} } from './types'\n\n`
+      if (!contents.includes("import type {")) contents = importLine + contents
     }
     fs.writeFileSync(serviceFile, contents, 'utf8')
     const exportLine = `export * from './${g}.service'\n`
     const idx = fs.existsSync(indexPath) ? fs.readFileSync(indexPath, 'utf8') : ''
     if (!idx.includes(exportLine)) fs.writeFileSync(indexPath, idx + exportLine, 'utf8')
   }
+  if (typeInputs.length) generateTypes(baseDir, sourceName, typeInputs)
 }

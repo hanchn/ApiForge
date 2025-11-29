@@ -41,6 +41,11 @@
         }
       ]
     },
+    "views": {
+      "explorer": [
+        { "id": "apiForgeView", "name": "ApiForge" }
+      ]
+    },
     "configuration": {
       "title": "ApiForge",
       "properties": {

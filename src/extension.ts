@@ -11,11 +11,13 @@ import { registerTestSource } from './ui/commands/testSource'
 import { registerRefreshCache } from './ui/commands/refreshCache'
 import { registerGenerateFromIds } from './ui/commands/generateFromIds'
 import { registerGenerateOpenAPI } from './ui/commands/generateOpenAPI'
+import { registerDataSourceView } from './ui/views/dataSourceView'
 
 export function activate(context: vscode.ExtensionContext) {
   const logger = new Logger('ApiForge')
   const settings = new SettingsManager(logger)
   const secrets = new SecretService(context.secrets)
+  context.subscriptions.push(registerDataSourceView(settings))
   context.subscriptions.push(
     registerGenerateOne(context, { logger, settings, secrets }),
     registerGenerateBatch(context, { logger, settings, secrets }),
