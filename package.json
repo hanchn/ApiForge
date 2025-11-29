@@ -16,7 +16,8 @@
     "onCommand:apiforge.renameMethod",
     "onCommand:apiforge.testSource",
     "onCommand:apiforge.refreshCache",
-    "onCommand:apiforge.generateFromIds"
+    "onCommand:apiforge.generateFromIds",
+    "onCommand:apiforge.generateOpenAPI"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -29,6 +30,7 @@
       { "command": "apiforge.testSource", "title": "ApiForge: 测试数据源" },
       { "command": "apiforge.refreshCache", "title": "ApiForge: 刷新数据源缓存" },
       { "command": "apiforge.generateFromIds", "title": "ApiForge: 生成（ProjectId/catId/id）" }
+      ,{ "command": "apiforge.generateOpenAPI", "title": "ApiForge: 从OpenAPI生成" }
     ],
     "menus": {
       "explorer/context": [
