@@ -10,6 +10,7 @@ import { registerRenameMethod } from './ui/commands/renameMethod'
 import { registerTestSource } from './ui/commands/testSource'
 import { registerRefreshCache } from './ui/commands/refreshCache'
 import { registerGenerateFromIds } from './ui/commands/generateFromIds'
+import { registerGenerateOpenAPI } from './ui/commands/generateOpenAPI'
 
 export function activate(context: vscode.ExtensionContext) {
   const logger = new Logger('ApiForge')
@@ -23,7 +24,8 @@ export function activate(context: vscode.ExtensionContext) {
     registerRenameMethod(context, { logger, settings, secrets }),
     registerTestSource(context, { logger, settings, secrets }),
     registerRefreshCache(context, { logger, settings, secrets }),
-    registerGenerateFromIds(context, { logger, settings, secrets })
+    registerGenerateFromIds(context, { logger, settings, secrets }),
+    registerGenerateOpenAPI(context, { logger, settings, secrets })
   )
   logger.info('ApiForge activated')
 }
