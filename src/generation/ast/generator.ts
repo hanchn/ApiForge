@@ -11,7 +11,7 @@ function groupKey(item: ApiItem): string {
 }
 
 function buildUrlFromPath(pathTmpl: string, paramsVar: string = 'params'): string {
-  return pathTmpl.replace(/\{([^}]+)\}/g, (_m, p1) => `\${'${encodeURIComponent(' + paramsVar + '.' + p1 + ')}'}`)
+  return pathTmpl.replace(/\{([^}]+)\}/g, (_m, p1) => '${encodeURIComponent(' + paramsVar + '.' + p1 + ')}')
 }
 
 function hasExportedFunction(contents: string, name: string): boolean {
